@@ -30,6 +30,7 @@ async function run() {
     await client.connect();
 
     const blogsCollection = client.db('blogsDB').collection('allBlogs');
+    const commentCollection = client.db('blogsDB').collection('allComments');
     //Api related  data
    app.get('/allBlogs',async(req,res) =>{
          const cursor = blogsCollection.find();
@@ -50,6 +51,25 @@ async function run() {
         const result = await blogsCollection.insertOne(blog);
         res.send(result);
     })
+     //comment 
+     app.get('/allComments',async(req,res) =>{
+               let query = {};
+               if(req.query?.fin){
+                query = {fin: req.query.fin};
+               }
+              // const ir = req.params.id;
+              // const  query = {fin: ir};
+               const result = await commentCollection.find(query).toArray();
+               res.send(result)
+     })
+    //comments post
+     app.post('/allComments', async(req,res) =>{
+              const commentInfo = req.body;
+              const result = await commentCollection.insertOne(commentInfo)
+              res.send(result);
+     })
+     
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -65,6 +85,6 @@ app.get('/',(req,res)=>{
     res.send("Assignment 11 server is running");
 })
 
-app.listen(port,(req,res) => {
+app.listen(port,() => {
     console.log('Assignment 11 server is running on port ',port);
 })
