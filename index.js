@@ -33,7 +33,12 @@ async function run() {
     const commentCollection = client.db('blogsDB').collection('allComments');
     //Api related  data
    app.get('/allBlogs',async(req,res) =>{
-         const cursor = blogsCollection.find();
+        
+         let query = {};
+         if(req.query.category){
+             query = {category: req.query.category}
+         }
+         const cursor = blogsCollection.find(query);
          const result = await cursor.toArray();
          res.send(result);
    })
@@ -45,11 +50,32 @@ async function run() {
          res.send(result);
    })
 
+  
+
     app.post('/allBlogs',async(req,res) => {
         const blog = req.body;
         console.log(req.body);
         const result = await blogsCollection.insertOne(blog);
         res.send(result);
+    })
+    // all blogs update single one
+    app.put('/allBlogs/:id', async(req,res) => {
+      const id = req.params.id;
+      const update = req.body;
+      const filter = {_id: new ObjectId(id)};
+      const options = {upsert: true};
+      const  updatedData = {
+            $set:{
+              title: update.title, 
+              photo: update.photo,
+              category: update.category,
+              shortDescription: update.shortDescription,longDescription: update.longDescription,
+              email: update.email,
+              name: update.name,        
+          }
+      }
+      const result = await blogsCollection.updateOne(filter,updatedData,options);
+      res.send(result);
     })
      //comment 
      app.get('/allComments',async(req,res) =>{
