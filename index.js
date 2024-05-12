@@ -31,6 +31,7 @@ async function run() {
 
     const blogsCollection = client.db('blogsDB').collection('allBlogs');
     const commentCollection = client.db('blogsDB').collection('allComments');
+    const wishesCollection = client.db('blogsDB').collection('allWishes');
     //Api related  data
    app.get('/allBlogs',async(req,res) =>{
         
@@ -94,6 +95,36 @@ async function run() {
               const result = await commentCollection.insertOne(commentInfo)
               res.send(result);
      })
+
+     //wishList
+     app.get('/allWishes', async(req,res)=>{
+        let query ={};
+        if(req.query?.userEmail){
+          query = {userEmail: req.query?.userEmail};
+        }
+        const result = await wishesCollection.find(query).toArray();
+        res.send(result)
+     })
+     //post
+    app.post('/allWishes', async(req,res)=>{
+          const query = {title: req.query.title,userEmail: req.query?.userEmail}
+      const existingWish = await wishesCollection.findOne(query);
+      console.log(existingWish)
+      if (existingWish) {
+          // If a similar document exists, return a message indicating duplicate data
+          return res.status(400).send({message: "Already have this"})
+      }
+           const unFormat = new Date();
+           const currentDate = new Date(unFormat).toLocaleString();
+           console.log(currentDate)
+           const wishData = req.body;
+           wishData.createAt = currentDate;
+           const result = await wishesCollection.insertOne(wishData);
+           res.send(result);
+    })
+
+  
+
      
 
     // Send a ping to confirm a successful connection
