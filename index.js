@@ -122,7 +122,14 @@ async function run() {
            const result = await wishesCollection.insertOne(wishData);
            res.send(result);
     })
+  //delete from wish list
+  app.delete('/allWishes/:id' , async(req,res) =>{
 
+       const id = req.params.id;
+       const query = {_id: new ObjectId(id)};
+       const result = await wishesCollection.deleteOne(query);
+       res.send(result);
+  })
   
 
      
