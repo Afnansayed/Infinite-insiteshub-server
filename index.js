@@ -32,6 +32,7 @@ async function run() {
     const blogsCollection = client.db('blogsDB').collection('allBlogs');
     const commentCollection = client.db('blogsDB').collection('allComments');
     const wishesCollection = client.db('blogsDB').collection('allWishes');
+    const feedbackCollection = client.db('blogsDB').collection('allReview');
     //Api related  data
    app.get('/allBlogs',async(req,res) =>{
         
@@ -39,7 +40,7 @@ async function run() {
          if(req.query.category){
              query = {category: req.query.category}
          }
-         console.log(req.query?.title)
+         //console.log(req.query?.title)
          if(req.query?.title){
             query = {title: { $regex: req.query?.title, $options: 'i' }}
          }
@@ -134,7 +135,13 @@ async function run() {
        const result = await wishesCollection.deleteOne(query);
        res.send(result);
   })
-  
+   //for review 
+
+   app.post('/allReview', async(req,res)=>{
+          const feedback = req.body;
+          const result = await feedbackCollection.insertOne(feedback);
+          res.send(result);
+   })
 
      
 
