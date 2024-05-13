@@ -39,6 +39,10 @@ async function run() {
          if(req.query.category){
              query = {category: req.query.category}
          }
+         console.log(req.query?.title)
+         if(req.query?.title){
+            query = {title: { $regex: req.query?.title, $options: 'i' }}
+         }
          const cursor = blogsCollection.find(query);
          const result = await cursor.toArray();
          res.send(result);
