@@ -136,14 +136,18 @@ async function run() {
        res.send(result);
   })
    //for review 
-
+   //get
+   app.get('/allReview',async(req,res) =>{
+        result = await feedbackCollection.find().toArray();
+        res.send(result);
+   })
+//post 
    app.post('/allReview', async(req,res)=>{
           const feedback = req.body;
           const result = await feedbackCollection.insertOne(feedback);
           res.send(result);
    })
 
-     
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
