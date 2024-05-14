@@ -156,7 +156,13 @@ async function run() {
       if (req.query?.userEmail) {
         query = { userEmail: req.query?.userEmail };
       }
-      const result = await wishesCollection.find(query).toArray();
+      const sort = req.query?.time;
+      let options= {};
+      if(sort){
+         options = {sort: {createAt : sort === 'asc'? 1: -1 } }
+      }
+
+      const result = await wishesCollection.find(query,options).toArray();
       res.send(result)
     })
     //post
@@ -168,7 +174,7 @@ async function run() {
         return res.status(400).send({ message: "Already have this" })
       }
       const unFormat = new Date();
-      const currentDate = new Date(unFormat).toLocaleString();
+      const currentDate = new Date(unFormat).toLocaleTimeString();
       console.log(currentDate)
       const wishData = req.body;
       wishData.createAt = currentDate;
